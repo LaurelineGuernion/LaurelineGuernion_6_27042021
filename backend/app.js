@@ -65,8 +65,8 @@ app.use((req, res, next) => {
 let expiryDate = new Date( Date.now() + 60 * 60 * 1000 ); // expiration dans 1 heure
 app.use(session({
   name: 'session',
-  keys: [process.env.COOKIESECRET], // .env pour voir le clé secret
-  cookie: { secure: false, // Si HTTPS mettre True
+  keys: [process.env.COOKIESECRET], // .env pour voir la clé secrète
+  cookie: { secure: false, // Si HTTPS mettre " True "
             httpOnly: true, // booléen indiquant si le cookie doit être envoyé uniquement via HTTP(S)
             domain: 'http://localhost:3000', // Domaine du cookie
             path: '/', // chemin du cookie
