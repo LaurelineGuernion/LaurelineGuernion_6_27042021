@@ -51,7 +51,7 @@ exports.login = (req, res, next) => {
               // Voir si les requêtes sont authentifiées
               token: jwt.sign(
                 { userId: user._id },
-                // clé secretè pour l'encodage
+                // clé secrète pour l'encodage
                 process.env.TOKEN_SECRET,
                 { expiresIn: '24h' }
               )
