@@ -21,8 +21,6 @@ const mongoSanitize = require('express-mongo-sanitize');
 // Contrer les attaques XSS
 // Nettoyer les entrées utilisateur (corps POST, requêtes GET, paramètres d'URL)
 const xss = require('xss-clean');
-// Limiter les demandes répétées de requêtes
-const rateLimit = require('express-rate-limit');
 
 //////////////////// IMPORTATION ROUTES ////////////////////
 const sauceRoutes = require('./routes/sauce');
@@ -68,14 +66,6 @@ app.use(session({
           }
   })
 );
-
-//////////////////// LIMITE LES REQUÊTES ////////////////////
-const limiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000, // 24h
-  max: 100 // limiter chaque IP à 100 requêtes
-});
-// Fonctionne sur toutes les requêtes
-app.use(limiter);
 
 //////////////////// GÈRER LES RESSOURCES IMAGES DE MANIÈRES STATIQUES ////////////////////
 app.use('/images', express.static(path.join(__dirname, 'images')));
