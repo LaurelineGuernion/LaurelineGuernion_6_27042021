@@ -29,7 +29,7 @@ npm (ou npx) nodemon
 #### Lancement de l’application : http://localhost:4200/login
 
 ## CONFIGURATION
-Dans le dossier backend/config faire une fichier .en avec dedans :
+Dans le dossier backend/config faire une fichier .env avec dedans :
 
 DB_USER_PASS= … ?
 
@@ -41,16 +41,16 @@ Ajout de vos codes d’accès
 
 ## TECHNOLOGIES UTILISÉES
 
-● framework : Express ;
+● framework : Express
 
-● serveur : NodeJS ;
+● serveur : NodeJS
 
-● base de données : MongoDB ;
+● base de données : MongoDB
 
 ● toutes les opérations de la base de données utilisent le pack Mongoose avec
 des schémas de données stricts.
 
-## EXIGENCES CONCERNANT LA SÉCURUTÉ
+## EXIGENCES CONCERNANT LA SÉCURITÉ
 
 ● l’API doit respecter le RGPD et les standards OWASP ;
 
