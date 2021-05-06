@@ -1,4 +1,4 @@
-// Doit utiliser le https pour sécurisé, cela permet le chiffrement des transmissions
+// Doit utiliser le https pour sécuriser, cela permet le chiffrage des transmissions
 const http = require('http');
 const app = require('./app');
 

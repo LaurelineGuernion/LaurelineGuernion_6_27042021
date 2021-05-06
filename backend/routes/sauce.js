@@ -19,7 +19,7 @@ router.delete('/:id', auth, sauceCtrl.deleteSauce);
 // Tableaux des sauces
 router.get('/', auth, sauceCtrl.getAllSauces);
 
-// Sauce unique - renvoie la sauce avec l'Id fourni
+// Sauce unique - renvoie la sauce avec l'Id fournit
 router.get('/:id', auth, sauceCtrl.getOneSauce);
 
 // Liker/disliker les sauces

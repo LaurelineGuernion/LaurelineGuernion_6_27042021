@@ -1,34 +1,33 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// Fournir des utilitaires pour travailler avec les chemins de fichiers et de répertoires
+// Permet de travailler avec les fichiers et les répertoires
 const path = require('path');
 
 //////////////////// SÉCURITÉ ////////////////////
 // Journalisation des requêtes
 const morgan = require('morgan');
-// Analyser l'activité de l'application - détecter les problèmes
+// Analyser l'activité de l'application
 const logger = require('./config/logger');
-// Protection cookies
+// Protection des cookies
 const session = require('cookie-session');
 // Sécuriser Express en définissant divers en-têtes HTTP
 const helmet = require('helmet');
-// Variables d'environnement - masque les informations de login
+// Variables d'environnement - masque les informations de logins
 require('dotenv').config({path: './config/.env'});
 // Désactiver la mise en cache côté client
 const nocache = require("nocache");
-// Nettoyer des données contre les attaques par injection NoSQL
+// Nettoyer des données contre les attaques par injection
 const mongoSanitize = require('express-mongo-sanitize');
-// Contrer les attaques XSS
-// Nettoyer les entrées utilisateur (corps POST, requêtes GET, paramètres d'URL)
+// Contrer les attaques XSS - Nettoyer les entrées utilisateur (POST, GET, paramètres d'URL)
 const xss = require('xss-clean');
 
-//////////////////// IMPORTATION ROUTES ////////////////////
+//////////////////// IMPORTATION DES ROUTES ////////////////////
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
 //////////////////// MISE EN PLACE DES PACKAGES ////////////////////
 const app = express();
-// limiter la charge que l'user peut soumettre à l'app
+// limiter la charge que l'utilisateur soumet à l'application
 app.use(express.json ({limite: '10kb'}));
 app.use(helmet());
 app.use(nocache());

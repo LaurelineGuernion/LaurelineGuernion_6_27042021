@@ -1,5 +1,5 @@
 const Sauce = require('../models/sauce');
-// fs permet de intéragir avec des fichiers
+// fs permet d'intéragir avec les fichiers
 const fs = require('fs');
 
 // Sécuriser les champs
@@ -11,7 +11,7 @@ exports.createSauce = (req, res, next) => {
 
   // Protection du formulaire avec un Regex pour interdire les caractères spéciaux
   if (sauceObject.name.match(regexForm) || sauceObject.manufacturer.match(regexForm) || sauceObject.description.match(regexForm) || sauceObject.mainPepper.match(regexForm)) {
-      return res.status(500).json({ error: 'Les caractères spéciaux sont interdits !' });
+      return res.status(400).json({ error: 'Les caractères spéciaux sont non autorisés !' });
   } else {
     // Sinon créer la sauce
       delete sauceObject._id;
@@ -42,9 +42,9 @@ exports.modifySauce = (req, res, next) => {
 
   // Protection du formulaire avec un Regex pour interdire les caractères spéciaux
   if (sauceObject.name.match(regexForm) || sauceObject.manufacturer.match(regexForm) || sauceObject.description.match(regexForm) || sauceObject.mainPepper.match(regexForm)) {
-    return res.status(500).json({ error: 'Les caractères spéciaux sont interdits !' });
+    return res.status(500).json({ error: 'Les caractères spéciaux sont non autorisés !' });
   } else {
-    // Sinon modifier la sauce
+    // Sinon modification de la sauce
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
       .then(() => res.status(200).json({ message: 'Sauce modifiée !'}))
       .catch(error => res.status(400).json({ error }));
@@ -119,7 +119,7 @@ exports.likeDislikeSauce = (req, res, next) => {
           usersLikedTrouve = true;
         }
       }
-      // Si l'id de l'utilisateur n'est pas dans usersLiked, cela signifie qu'il n'a pas aimé la sauce, alors modifier son like/dislike
+      // Si l'id de l'utilisateur n'est pas dans usersLiked, cela signifie qu'il n'a pas aimé la sauce, alors modifier like/dislike
       if (usersLikedTrouve == false) {
         Sauce.updateOne(
           { _id: idParams },
