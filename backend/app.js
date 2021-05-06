@@ -13,7 +13,7 @@ const session = require('cookie-session');
 // Sécuriser Express en définissant divers en-têtes HTTP
 const helmet = require('helmet');
 // Variables d'environnement - masque les informations de login
-require('dotenv').config({path: './config/.env'})
+require('dotenv').config({path: './config/.env'});
 // Désactiver la mise en cache côté client
 const nocache = require("nocache");
 // Nettoyer des données contre les attaques par injection NoSQL
