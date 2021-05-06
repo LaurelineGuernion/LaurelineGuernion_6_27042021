@@ -89,7 +89,7 @@ exports.likeDislikeSauce = (req, res, next) => {
   // Liker la sauce
   if(likeBody == 1) { 
       Sauce.updateOne(
-        { _id: req.params.id },
+        { _id: idParams },
         // Utilisation des opérateurs Mongoose - https://docs.mongodb.com/manual/reference/operator/update/
         { $inc: { likes: +1 },
           $push: { usersLiked: UserIdBody }})
@@ -114,7 +114,7 @@ exports.likeDislikeSauce = (req, res, next) => {
     .then((sauce) => {
       let usersLikedTrouve = false;
       // Si l'id de l'utilisateur est trouvé dans le tableau usersLiked, cela veut dire qu'il a liké la sauce
-      for (i = 0; i < sauce.usersLiked.length; i++) {
+      for (let i = 0; i < sauce.usersLiked.length; i++) {
         if (sauce.usersLiked[i] == UserIdBody) {
           usersLikedTrouve = true;
         }
