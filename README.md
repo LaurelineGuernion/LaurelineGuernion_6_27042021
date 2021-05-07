@@ -29,15 +29,13 @@ npm (ou npx) nodemon
 #### Lancement de l’application : http://localhost:4200/login
 
 ## CONFIGURATION
-Dans le dossier backend/config faire une fichier .env avec dedans :
+Dans le dossier backend/config renommer le fichier .env.exemple en .env, puis remplir vos accès après les "=" :
 
 DB_USER_PASS= … ?
 
 TOKEN_SECRET= … ?
 
 COOKIESECRET= … ?
-
-Ajout de vos codes d’accès
 
 ## TECHNOLOGIES UTILISÉES
 
