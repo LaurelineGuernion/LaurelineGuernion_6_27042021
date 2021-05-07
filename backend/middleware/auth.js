@@ -5,9 +5,9 @@ module.exports = (req, res, next) => {
   try {
     // Récupérer le Token après l'espace
     const token = req.headers.authorization.split(' ')[1];
-    // Décoder le token
+    // Vérifier le token
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    // Récupérer l'Id de l'utilisateur
+    // Récupérer l'Id de l'utilisateur du token vérifié
     const userId = decodedToken.userId;
 
     // Vérifier si l'Id correspond au Token

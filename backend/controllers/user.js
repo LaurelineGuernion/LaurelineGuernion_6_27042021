@@ -29,10 +29,11 @@ exports.signup = (req, res, next) => {
     // Crypter le mot de passe, sale 10x pour renforcer le cryptage
     bcrypt.hash(password, 10)
       .then(hash => {
+        // Récupérer le hash du mot de passe à enregistrer dans la BDD
         const user = new User({
           // Masquer l'email
           email: maskData.maskEmail2(email, emailMask2Options),
-          // Hash le mot de passe
+          // Enregistrer le hash du mot de passe
           password: hash
         });
         user.save()
@@ -49,6 +50,7 @@ exports.signup = (req, res, next) => {
 exports.login = (req, res, next) => {
   // Trouver l'utilisateur correspondant à l'email
     User.findOne({ email: maskData.maskEmail2(req.body.email, emailMask2Options) })
+      // Vérifier si on a un utilisateur ou non
       .then(user => {
         if (!user) {
           return res.status(401).json({ error: 'Utilisateur non trouvé !' });

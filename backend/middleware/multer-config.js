@@ -8,7 +8,7 @@ const MIME_TYPES = {
   'image/png': 'png'
 };
 
-// Enregistrer sur le disque, enregistrer le fichier dans /images
+// Enregistrer sur le disque dans le dossier /images
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, 'images');

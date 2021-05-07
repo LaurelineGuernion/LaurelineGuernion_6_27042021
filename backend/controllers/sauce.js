@@ -7,6 +7,7 @@ const regexForm = /[^a-zA-ZÀ-ÿ-0-9-\s,.!()']+$/g;
 
 //////////////////// CRÉATION DE LA SAUCE ////////////////////
 exports.createSauce = (req, res, next) => {
+  // Objet js sous forme de chaîne de caractères
   const sauceObject = JSON.parse(req.body.sauce);
 
   // Protection du formulaire avec un Regex pour interdire les caractères spéciaux
@@ -53,10 +54,12 @@ exports.modifySauce = (req, res, next) => {
 
 //////////////////// SUPPRESSION DE LA SAUCE ////////////////////
 exports.deleteSauce = (req, res, next) => {
+  // Trouver l'objet dans la BDD
     Sauce.findOne({ _id: req.params.id })
       .then(sauce => {
+        // Extraire nom du fichier à supprimer
         const filename = sauce.imageUrl.split('/images/')[1];
-        // suppression de la sauce dans la base de données et dans le dossier /images
+        // suppression du fichier dans la BDD et dans le dossier /images
         fs.unlink(`images/${filename}`, () => {
           Sauce.deleteOne({ _id: req.params.id })
             .then(() => res.status(200).json({ message: 'Sauce supprimée !'}))
