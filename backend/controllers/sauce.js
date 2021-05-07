@@ -43,7 +43,7 @@ exports.modifySauce = (req, res, next) => {
 
   // Protection du formulaire avec un Regex pour interdire les caractères spéciaux
   if (sauceObject.name.match(regexForm) || sauceObject.manufacturer.match(regexForm) || sauceObject.description.match(regexForm) || sauceObject.mainPepper.match(regexForm)) {
-    return res.status(500).json({ error: 'Les caractères spéciaux sont non autorisés !' });
+    return res.status(400).json({ error: 'Les caractères spéciaux sont non autorisés !' });
   } else {
     // Sinon modification de la sauce
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
