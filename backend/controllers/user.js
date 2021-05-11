@@ -1,20 +1,11 @@
-// Crypte le mote de passe
+// Crypte le mot de passe
 const bcrypt = require('bcrypt');
-// Attribuer un token à l'utilisateur et permet de les vérifier
+// Attribuer un token à l'utilisateur et permet de le vérifier
 const jwt = require('jsonwebtoken');
-// Masque l'email
-const maskData = require("../node_modules/maskdata");
+// Crypte l'email
+const cryptojs = require('crypto-js');
 
 const User = require('../models/user');
-
-
-// Masquage de l'email avec ****@****
-const emailMask2Options = {
-  maskWith: "*",
-  unmaskedStartCharactersBeforeAt: 0,
-  unmaskedEndCharactersAfterAt: 0,
-  maskAtTheRate: false
-};
 
 //////////////////// INSCRIPTION ////////////////////
 exports.signup = (req, res, next) => {
@@ -24,7 +15,8 @@ exports.signup = (req, res, next) => {
 
   const email = req.body.email;
   const password = req.body.password;
- 
+  const cryptedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY_CRYPTO).toString();
+
   if(email.match(emailRegex) && password.match(passwordRegex)) {
     // Crypter le mot de passe, sale 10x pour renforcer le cryptage
     bcrypt.hash(password, 10)
@@ -32,7 +24,7 @@ exports.signup = (req, res, next) => {
         // Récupérer le hash du mot de passe à enregistrer dans la BDD
         const user = new User({
           // Masquer l'email
-          email: maskData.maskEmail2(email, emailMask2Options),
+          email: cryptedEmail,
           // Enregistrer le hash du mot de passe
           password: hash
         });
@@ -48,8 +40,10 @@ exports.signup = (req, res, next) => {
 
 //////////////////// CONNEXION ////////////////////
 exports.login = (req, res, next) => {
-  // Trouver l'utilisateur correspondant à l'email
-    User.findOne({ email: maskData.maskEmail2(req.body.email, emailMask2Options) })
+  const cryptedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY_CRYPTO).toString();
+    // Trouver l'utilisateur correspondant à l'email
+    
+    User.findOne({ email: cryptedEmail })
       // Vérifier si on a un utilisateur ou non
       .then(user => {
         if (!user) {
