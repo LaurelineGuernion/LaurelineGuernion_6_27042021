@@ -37,6 +37,8 @@ TOKEN_SECRET= … ?
 
 COOKIESECRET= … ?
 
+EMAIL_KEY_CRYPTO= … ?
+
 ## TECHNOLOGIES UTILISÉES
 
 ● framework : Express
