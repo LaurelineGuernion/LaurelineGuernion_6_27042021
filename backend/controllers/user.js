@@ -12,12 +12,15 @@ exports.signup = (req, res, next) => {
   // Sécuriser les champs
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,}$/;
+  const espaceRegex = /[\s]/;
 
   const email = req.body.email;
   const password = req.body.password;
   const cryptedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY_CRYPTO).toString();
 
-  if(email.match(emailRegex) && password.match(passwordRegex)) {
+  if (email.match(espaceRegex) || password.match(espaceRegex)) {
+    return res.status(400).json({ error: 'Les espaces ne sont pas autorisés' });
+  } else if(email.match(emailRegex) && password.match(passwordRegex)) {
     // Crypter le mot de passe, sale 10x pour renforcer le cryptage
     bcrypt.hash(password, 10)
       .then(hash => {
@@ -34,21 +37,21 @@ exports.signup = (req, res, next) => {
       })
       .catch(error => res.status(500).json({ error }));
   } else {
-      throw new Error("Mot de passe non sécurisé (ajoutez au moins un chiffre, un signe spéciaux, une lettre minuscule et majuscule) ou email invalide.");
+      throw new Error("Mot de passe pas assez sécurisé ou email invalide.");
    }
 };
 
 //////////////////// CONNEXION ////////////////////
 exports.login = (req, res, next) => {
-  const cryptedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY_CRYPTO).toString();
     // Trouver l'utilisateur correspondant à l'email
+    const cryptedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY_CRYPTO).toString();
     
-    User.findOne({ email: cryptedEmail })
-      // Vérifier si on a un utilisateur ou non
+    // Vérifier l'email, si c'est false une erreur s'affiche
+    User.findOne({email: cryptedEmail})
       .then(user => {
         if (!user) {
-          return res.status(401).json({ error: 'Utilisateur non trouvé !' });
-        }
+          return res.status(401).json({ error: 'Email non valide !' });
+        };
         // Comparer le mot de passe et le hash
         bcrypt.compare(req.body.password, user.password)
           .then(valid => { 
@@ -71,4 +74,4 @@ exports.login = (req, res, next) => {
           .catch(error => res.status(500).json({ error }));
       })
       .catch(error => res.status(500).json({ error }));
-  };
+};

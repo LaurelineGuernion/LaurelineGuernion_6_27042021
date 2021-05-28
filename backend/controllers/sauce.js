@@ -10,6 +10,9 @@ exports.createSauce = (req, res, next) => {
   // Objet js sous forme de chaîne de caractères
   const sauceObject = JSON.parse(req.body.sauce);
 
+  if (sauceObject.name === undefined || sauceObject.manufacturer === undefined || sauceObject.description === undefined || sauceObject.mainPepper === undefined ) {
+    return res.status(400).json({error: 'Undefined n\'est pas une valeur valide'});
+  };
   // Protection du formulaire avec un Regex pour interdire les caractères spéciaux
   if (sauceObject.name.match(regexForm) || sauceObject.manufacturer.match(regexForm) || sauceObject.description.match(regexForm) || sauceObject.mainPepper.match(regexForm)) {
       return res.status(400).json({ error: 'Les caractères spéciaux sont non autorisés !' });
@@ -86,59 +89,62 @@ exports.getOneSauce = (req, res, next) => {
 //////////////////// LIKE/DISLIKE DES SAUCES ////////////////////
 exports.likeDislikeSauce = (req, res, next) => {    
   const likeBody = req.body.like;
-  const UserIdBody = req.body.userId;
+  const userIdBody = req.body.userId;
   const idParams = req.params.id;
 
   // Liker la sauce
-  if(likeBody == 1) { 
-      Sauce.updateOne(
-        { _id: idParams },
-        // Utilisation des opérateurs Mongoose - https://docs.mongodb.com/manual/reference/operator/update/
-        { $inc: { likes: +1 },
-          $push: { usersLiked: UserIdBody }})
-      .then( () => res.status(200).json({ message: 'Vous aimez la sauce !' }))
-      .catch( error => res.status(400).json({ error}));
-  } 
-  
-  // Disliker la sauce
-  if(likeBody == -1) {
-      Sauce.updateOne(
-        { _id: idParams },
-        { $inc: { dislikes: +1 },
-          $push: { usersDisliked: UserIdBody }})
-      .then( () => res.status(200).json({ message: "Vous n'aimez pas la sauce !" }))
-      .catch( error => res.status(400).json({ error}));
-  } 
-  
-  // Modifier dislike/like
-  if (likeBody == 0) {
-    Sauce.findOne(
-      { _id: idParams })
+  Sauce.findOne({ _id: idParams })
     .then((sauce) => {
-      let usersLikedTrouve = false;
-      // Si l'id de l'utilisateur est trouvé dans le tableau usersLiked, cela veut dire qu'il a liké la sauce
-      for (let i = 0; i < sauce.usersLiked.length; i++) {
-        if (sauce.usersLiked[i] == UserIdBody) {
-          usersLikedTrouve = true;
+      if (!sauce.usersLiked.includes(userIdBody)) {
+        if(likeBody === 1) { 
+          Sauce.updateOne(
+            { _id: idParams },
+            // Utilisation des opérateurs Mongoose - https://docs.mongodb.com/manual/reference/operator/update/
+            { $inc: { likes: 1 },
+              $push: { usersLiked: userIdBody }})
+          .then( () => res.status(200).json({ message: 'Vous aimez la sauce !' }))
+          .catch( error => res.status(400).json({ error}));
+        }
+      };
+      // Disliker la sauce
+      if (!sauce.usersDisliked.includes(userIdBody)) {
+        if(likeBody === -1) {
+            Sauce.updateOne(
+              { _id: idParams },
+              { $inc: { dislikes: 1 },
+                $push: { usersDisliked: userIdBody }})
+            .then( () => res.status(200).json({ message: "Vous n'aimez pas la sauce !" }))
+            .catch( error => res.status(400).json({ error}));
+        }
+      };
+      
+      // Modifier dislike/like
+      if (likeBody === 0) {
+        let usersLikedTrouve = false;
+        // Si l'id de l'utilisateur est trouvé dans le tableau usersLiked, cela veut dire qu'il a liké la sauce
+        for (let i = 0; i < sauce.usersLiked.length; i++) {
+          if (sauce.usersLiked[i] === userIdBody) {
+            usersLikedTrouve = true;
+          }
+        }
+        // Si l'id de l'utilisateur n'est pas dans usersLiked, cela signifie qu'il n'a pas aimé la sauce
+        if (usersLikedTrouve === false) {
+          Sauce.updateOne(
+            { _id: idParams },
+            { $pull: { usersDisliked: userIdBody },
+              $inc: { dislikes: -1 }})
+            .then(() => res.status(200).json({ message: "Dislike en moins !" }))
+            .catch((error) => res.status(400).json({ error }));
+        } else if (usersLikedTrouve === true){
+          // Modifier le vote dans usersliked
+          Sauce.updateOne(
+            { _id: idParams },
+            { $pull: { usersLiked: userIdBody },
+              $inc: { likes: -1 }})
+            .then(() => res.status(200).json({ message: "Like en moins " }))
+            .catch((error) => res.status(400).json({ error }));
         }
       }
-      // Si l'id de l'utilisateur n'est pas dans usersLiked, cela signifie qu'il n'a pas aimé la sauce, alors modifier like/dislike
-      if (usersLikedTrouve == false) {
-        Sauce.updateOne(
-          { _id: idParams },
-          { $pull: { usersDisliked: UserIdBody },
-            $inc: { dislikes: -1 }})
-          .then(() => res.status(200).json({ message: "Dislike en moins !" }))
-          .catch((error) => res.status(400).json({ error }));
-      } else {
-        // Modifier le vote dans usersliked
-        Sauce.updateOne(
-          { _id: idParams },
-          { $pull: { usersLiked: UserIdBody },
-            $inc: { likes: -1 }})
-          .then(() => res.status(200).json({ message: "Like en moins " }))
-          .catch((error) => res.status(400).json({ error }));
-      }
-    });
-  }
+    })
+    .catch((error) => res.status(400).json({ error }));
 };
