@@ -10,7 +10,7 @@ exports.createSauce = (req, res, next) => {
   // Objet js sous forme de chaîne de caractères
   const sauceObject = JSON.parse(req.body.sauce);
 
-  if (sauceObject.name === undefined || sauceObject.manufacturer === undefined || sauceObject.description === undefined || sauceObject.mainPepper === undefined ) {
+  if (!sauceObject.name || !sauceObject.manufacturer || !sauceObject.description || !sauceObject.mainPepper) {
     return res.status(400).json({error: 'Undefined n\'est pas une valeur valide'});
   };
   // Protection du formulaire avec un Regex pour interdire les caractères spéciaux
@@ -44,7 +44,7 @@ exports.modifySauce = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   } : { ...req.body }; // Sinon on prend le corps de la requête
 
-  if (sauceObject.name === undefined || sauceObject.manufacturer === undefined || sauceObject.description === undefined || sauceObject.mainPepper === undefined ) {
+  if (!sauceObject.name || !sauceObject.manufacturer || !sauceObject.description || !sauceObject.mainPepper) {
     return res.status(400).json({error: 'Undefined n\'est pas une valeur valide'});
   };
   // Protection du formulaire avec un Regex pour interdire les caractères spéciaux
