@@ -22,9 +22,6 @@ exports.signup = (req, res, next) => {
   };
   const cryptedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY_CRYPTO).toString();
 
-  if (!email || !password) {
-    return res.status(400).json({error: 'Undefined n\'est pas une valeur valide'});
-  };
   if (email.match(espaceRegex) || password.match(espaceRegex)) {
     return res.status(400).json({ error: 'Les espaces ne sont pas autorisés' });
   } else if(email.match(emailRegex) && password.match(passwordRegex)) {
