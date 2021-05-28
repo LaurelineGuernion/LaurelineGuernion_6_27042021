@@ -44,6 +44,9 @@ exports.modifySauce = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   } : { ...req.body }; // Sinon on prend le corps de la requête
 
+  if (sauceObject.name === undefined || sauceObject.manufacturer === undefined || sauceObject.description === undefined || sauceObject.mainPepper === undefined ) {
+    return res.status(400).json({error: 'Undefined n\'est pas une valeur valide'});
+  };
   // Protection du formulaire avec un Regex pour interdire les caractères spéciaux
   if (sauceObject.name.match(regexForm) || sauceObject.manufacturer.match(regexForm) || sauceObject.description.match(regexForm) || sauceObject.mainPepper.match(regexForm)) {
     return res.status(400).json({ error: 'Les caractères spéciaux sont non autorisés !' });
